@@ -1,4 +1,4 @@
-%function [ F res_err ] = fundamental_matrix( X )
+function [ F res_err ] = fundamental_matrix( X )
 % Compute the fundamental matrix
 %   Detailed explanation goes here
 
@@ -44,9 +44,10 @@ epipolar2=F'*x2_0;
 
 Z = zeros(1,N);
 for i=1:N
-    Z(i) = 0.5*((epipolar1(:,i)'*x2_0(:,i))^2/sum(epipolar1(:,i).^2)+(epipolar2(:,i)'*x1_0(:,i))^2/sum(epipolar2(:,i).^2));
+    Z(i) = 0.5*((epipolar1(:,i)'*x2_0(:,i))^2/sum(epipolar1(:,i).^2)+...
+        (epipolar2(:,i)'*x1_0(:,i))^2/sum(epipolar2(:,i).^2));
 end
 res_err = mean(Z);
 
-%end
+end
 
