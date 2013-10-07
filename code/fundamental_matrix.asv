@@ -1,9 +1,8 @@
-%function [ F res_err ] = fundamental_matrix( X )
+function [ F res_err ] = fundamental_matrix( X )
 % Compute the fundamental matrix
 %   Detailed explanation goes here
 
 % number of point correspondences
-
 N = size(X,1);
 
 % get normalization matrices
@@ -20,30 +19,35 @@ A = [x1(:,1).*x2(:,1) x1(:,2).*x2(:,1) x2(:,1) x1(:,1).*x2(:,2)...
 x1 = x1';
 x2 = x2';
 
+% find singular vector
 [U_a,S_a,V_a] = svd(A);
 m = size(V_a);
 
+% find the singular vector with smallest singular value
 f = V_a(:,m(2));
+f = reshape(f,3,3)';
 
-F_uncorr = [];
-for i = 1:length(f)
-    col = rem(i,3);
-    if col==0
-        col = 3;
-    end
-    F_uncorr(ceil(i/3),col) = f(i);
+% enforcing the internal constraint
+[U,S,V] = svd(f);
+
+% set rank 2
+n = size(V);
+S(n(1),n(2)) = 0;
+F = U*S*V';
+
+% denormalization
+F = T2'*F*T1;
+
+%Residual Error
+epipolar1=F*x1_h;
+epipolar2=F'*x2_h;
+
+Z = [];
+for i=1:length(X)
+    Z(i) = 0.5*(([epipolar1(:,i)]'*x2_h(:,i))^2/sum(epipolar1(:,i).^2)+([epipolar2(:,i)]'*x1_h(:,i))^2/sum(epipolar2(:,i).^2));
 end
 
-%SVD
-[U,S,V] = svd(F_uncorr);
-%F correction
-n = size(V);
+res_err = mean(Z);
 
-S(n(1),n(2)) = 1;
-
-F_corr = U*S*V';
-
-%Denormalization
-F = T2'*F_corr*T1;
-%end
+end
 
