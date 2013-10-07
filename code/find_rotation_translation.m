@@ -12,10 +12,9 @@ t{1,1} = t_1;
 t{2,1} = t_2;
 
 theta = pi()/2;
-phi = -theta;
 
 R_90 = [cos(theta) -sin(theta) 0; sin(theta) cos(theta) 0; 0 0 1];
-R_neg_90 = [cos(phi) -sin(phi) 0; sin(phi) cos(phi) 0; 0 0 1];
+R_neg_90 = R_90';
 
 R_1 = U*R_90'*V';
 R_2 = U*R_neg_90'*V';
