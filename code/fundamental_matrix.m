@@ -39,14 +39,18 @@ F = U*S*V';
 F = T2'*F*T1;
 
 % residual Error
+% calculate the epipolar line’s coefficients in each image
 epipolar1=F*x1_0;
 epipolar2=F'*x2_0;
 
+% residual Error
+% calculate the distance between the points and the respective epipolar line in each of the images
 Z = zeros(1,N);
 for i=1:N
-    Z(i) = 0.5*((epipolar1(:,i)'*x2_0(:,i))^2/sum(epipolar1(:,i).^2)+...
-        (epipolar2(:,i)'*x1_0(:,i))^2/sum(epipolar2(:,i).^2));
+    Z(i) = 0.5*((epipolar1(:,i)'*x2_0(:,i))^2/sum(epipolar1(1:2,i).^2)+...
+        (epipolar2(:,i)'*x1_0(:,i))^2/sum(epipolar2(1:2,i).^2));
 end
+% take mean distance
 res_err = mean(Z);
 
 end
